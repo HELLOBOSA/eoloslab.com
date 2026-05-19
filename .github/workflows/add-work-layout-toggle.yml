@@ -1,0 +1,62 @@
+name: Add work layout toggle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/add-work-layout-toggle.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  patch-index:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Patch control center
+        run: |
+          python3 <<'PY'
+          from pathlib import Path
+          import re
+
+          p = Path('index.html')
+          s = p.read_text()
+
+          s = s.replace('<body data-ground="warm-dark">', '<body data-ground="warm-dark" data-layout="stacked">')
+
+          css_anchor = '.asym-r .frame{margin-left:22vw;aspect-ratio:5/4}.asym-l .frame{margin-right:22vw;aspect-ratio:5/4}\n.services'
+          css_add = '.asym-r .frame{margin-left:22vw;aspect-ratio:5/4}.asym-l .frame{margin-right:22vw;aspect-ratio:5/4}\nbody[data-layout=marquee] .work-list{display:flex;gap:18px;overflow-x:auto;scroll-snap-type:x mandatory;padding:0 var(--pad) 46px;overscroll-behavior-x:contain}\nbody[data-layout=marquee] .work{flex:0 0 min(82vw,980px);border:0;scroll-snap-align:start}\nbody[data-layout=marquee] .work:last-child{border-bottom:0}\nbody[data-layout=marquee] .frame{margin:0!important;aspect-ratio:16/11!important}\nbody[data-layout=marquee] .work-row{grid-template-columns:1fr;padding:16px 0 0}\nbody[data-layout=marquee] .work-row>.meta{display:none}\nbody[data-layout=marquee] .pills{justify-content:flex-start}\nbody[data-layout=marquee] .work-list::-webkit-scrollbar{height:6px}\nbody[data-layout=marquee] .work-list::-webkit-scrollbar-track{background:transparent}\nbody[data-layout=marquee] .work-list::-webkit-scrollbar-thumb{background:var(--line);border-radius:999px}\n.services'
+          if 'body[data-layout=marquee] .work-list' not in s:
+            s = s.replace(css_anchor, css_add)
+
+          tweak_css_anchor = '.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}#gear'
+          tweak_css_add = '.seg button[aria-pressed=true]{background:var(--ink);color:var(--bg)}.control-group{margin-top:12px;padding-top:12px;border-top:1px solid var(--line)}#gear'
+          if '.control-group{margin-top:12px' not in s:
+            s = s.replace(tweak_css_anchor, tweak_css_add)
+
+          old_controls = '<div class="meta">Ground</div><div class="seg"><button data-ground="warm-dark">Warm Dark</button><button data-ground="black">Black</button><button data-ground="light">Light</button></div></aside>'
+          new_controls = '<div class="meta">Ground</div><div class="seg"><button data-ground="warm-dark">Warm Dark</button><button data-ground="black">Black</button><button data-ground="light">Light</button></div><div class="control-group"><div class="meta">Work Layout</div><div class="seg"><button data-layout="stacked">Stacked</button><button data-layout="marquee">Marquee</button></div></div></aside>'
+          if 'data-layout="marquee"' not in s:
+            s = s.replace(old_controls, new_controls)
+
+          new_script = """<script>const body=document.body;function setChoice(key,v){body.dataset[key]=v;document.querySelectorAll('[data-'+key+']').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset[key]===v)));localStorage.setItem(key,v)}document.querySelectorAll('[data-ground]').forEach(b=>b.onclick=()=>setChoice('ground',b.dataset.ground));document.querySelectorAll('[data-layout]').forEach(b=>b.onclick=()=>setChoice('layout',b.dataset.layout));document.getElementById('close').onclick=()=>body.classList.add('closed');document.getElementById('gear').onclick=()=>body.classList.remove('closed');setChoice('ground',localStorage.getItem('ground')||'warm-dark');setChoice('layout',localStorage.getItem('layout')||'stacked');</script>"""
+          s = re.sub(r'<script>const body=document\.body;function setGround[\s\S]*?</script>', new_script, s)
+
+          p.write_text(s)
+          PY
+
+      - name: Commit patched index
+        run: |
+          if git diff --quiet -- index.html; then
+            echo "No index changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Add work layout toggle to control center"
+          git push
