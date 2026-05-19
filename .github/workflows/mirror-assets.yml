@@ -1,0 +1,76 @@
+name: Mirror EOLOS project assets
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - index.html
+      - .github/workflows/mirror-assets.yml
+
+permissions:
+  contents: write
+
+jobs:
+  mirror-assets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install image tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+
+      - name: Download and convert project images
+        run: |
+          set -euo pipefail
+          mkdir -p assets/projects/triptychs
+          tmpdir="$(mktemp -d)"
+          mapfile -t files <<'EOF'
+          https://eoloslab.gr/assets/granolita.jpeg|assets/projects/triptychs/granolita-01.jpg
+          https://eoloslab.gr/assets/gallery/granolita-2.jpeg|assets/projects/triptychs/granolita-02.jpg
+          https://eoloslab.gr/assets/gallery/granolita-3.jpeg|assets/projects/triptychs/granolita-03.jpg
+          https://eoloslab.gr/assets/selva.jpeg|assets/projects/triptychs/selva-01.jpg
+          https://eoloslab.gr/assets/gallery/selva-2.jpeg|assets/projects/triptychs/selva-02.jpg
+          https://eoloslab.gr/assets/gallery/selva-3.jpeg|assets/projects/triptychs/selva-03.jpg
+          https://eoloslab.gr/assets/norrsken.jpeg|assets/projects/triptychs/norrsken-01.jpg
+          https://eoloslab.gr/assets/gallery/norrsken-2.jpeg|assets/projects/triptychs/norrsken-02.jpg
+          https://eoloslab.gr/assets/gallery/norrsken-3.jpeg|assets/projects/triptychs/norrsken-03.jpg
+          https://eoloslab.gr/assets/dterra.jpeg|assets/projects/triptychs/dterra-01.jpg
+          https://eoloslab.gr/assets/gallery/dterra-2.jpeg|assets/projects/triptychs/dterra-02.jpg
+          https://eoloslab.gr/assets/gallery/dterra-3.jpeg|assets/projects/triptychs/dterra-03.jpg
+          https://eoloslab.gr/assets/a75.jpeg|assets/projects/triptychs/a75-01.jpg
+          https://eoloslab.gr/assets/gallery/a75-2.jpeg|assets/projects/triptychs/a75-02.jpg
+          https://eoloslab.gr/assets/gallery/a75-3.jpeg|assets/projects/triptychs/a75-03.jpg
+          https://eoloslab.gr/assets/k38.jpeg|assets/projects/triptychs/k38-01.jpg
+          https://eoloslab.gr/assets/gallery/k38-2.jpeg|assets/projects/triptychs/k38-02.jpg
+          https://eoloslab.gr/assets/gallery/k38-3.jpeg|assets/projects/triptychs/k38-03.jpg
+          https://eoloslab.gr/assets/v1.png|assets/projects/triptychs/v1-01.jpg
+          https://eoloslab.gr/assets/gallery/v1-2.jpeg|assets/projects/triptychs/v1-02.jpg
+          https://eoloslab.gr/assets/gallery/v1-3.jpeg|assets/projects/triptychs/v1-03.jpg
+          https://eoloslab.gr/assets/k12.webp|assets/projects/triptychs/k12-01.jpg
+          https://eoloslab.gr/assets/gallery/k12-2.webp|assets/projects/triptychs/k12-02.jpg
+          https://eoloslab.gr/assets/gallery/k12-3.webp|assets/projects/triptychs/k12-03.jpg
+          EOF
+          for item in "${files[@]}"; do
+            item="${item#${item%%[![:space:]]*}}"
+            url="${item%%|*}"
+            out="${item#*|}"
+            raw="$tmpdir/$(basename "$out").source"
+            curl -L --fail --retry 3 --retry-delay 2 "$url" -o "$raw"
+            magick "$raw" -auto-orient -resize '1800x1800>' -quality 84 "$out"
+          done
+
+      - name: Commit mirrored assets
+        run: |
+          if git diff --quiet -- assets/projects/triptychs; then
+            echo "No asset changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add assets/projects/triptychs
+          git commit -m "Mirror project assets into eoloslab.com"
+          git push
