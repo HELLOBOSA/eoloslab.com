@@ -65,7 +65,7 @@ jobs:
 
       - name: Commit mirrored assets
         run: |
-          if git diff --quiet -- assets/projects/triptychs; then
+          if [ -z "$(git status --porcelain -- assets/projects/triptychs)" ]; then
             echo "No asset changes."
             exit 0
           fi
