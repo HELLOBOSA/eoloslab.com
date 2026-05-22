@@ -283,14 +283,14 @@ h1,h2,h3,h4{margin:0;font-weight:400;}
 @media(max-width:700px){.foot{grid-template-columns:1fr;}.foot .col:nth-child(2),.foot .col:nth-child(3){align-items:flex-start;text-align:left;}}
 
 /* Tweaks */
-#tweaks-trigger{position:fixed;right:20px;bottom:20px;width:36px;height:36px;border-radius:999px;background:color-mix(in oklch,var(--bg) 70%,transparent);border:1px solid var(--rule);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:999;display:flex;align-items:center;justify-content:center;color:var(--ink-mute);font-family:var(--f-mono);font-size:13px;cursor:pointer;transition:opacity 280ms,color 280ms,border-color 280ms;opacity:.5;}
+#tweaks-trigger{position:fixed;right:20px;bottom:20px;width:36px;height:36px;border-radius:999px;background:color-mix(in oklch,var(--bg) 70%,transparent);border:1px solid var(--rule);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);z-index:999;display:flex;align-items:center;justify-content:center;color:var(--ink-mute);font-family:var(--f-mono);font-size:19px;cursor:pointer;transition:opacity 280ms,color 280ms,border-color 280ms;opacity:.5;}
 #tweaks-trigger:hover{opacity:1;color:var(--ink);border-color:var(--ink-soft);}
 body[data-tweaks-open="true"] #tweaks-trigger{display:none;}
 #tweaks{position:fixed;right:20px;bottom:20px;width:280px;background:color-mix(in oklch,var(--bg) 80%,transparent);color:var(--ink);border:1px solid var(--rule);border-radius:14px;padding:14px;font-family:var(--f-mono);font-size:var(--t-meta);letter-spacing:0.08em;text-transform:uppercase;z-index:1000;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 24px 60px -20px rgba(0,0,0,.5);display:none;}
 body[data-tweaks-open="true"] #tweaks{display:block;}
 #tweaks header{display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid var(--rule);margin-bottom:12px;}
 #tweaks header .title{color:var(--ink);}
-#tweaks header button{color:var(--ink-mute);}
+#tweaks header button{color:var(--ink-mute);font-size:20px;}
 #tweaks header button:hover{color:var(--ink);}
 #tweaks .group{padding:8px 0;}
 #tweaks .group+.group{border-top:1px solid var(--rule);}
