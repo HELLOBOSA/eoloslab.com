@@ -88,6 +88,7 @@ h1,h2,h3,h4{margin:0;font-weight:400;}
 .hero{position:relative;min-height:100vh;padding:clamp(120px,16vh,200px) var(--pad-x) clamp(40px,6vh,80px);display:grid;gap:clamp(40px,6vh,80px);}
 .hero .top-meta{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:end;border-bottom:1px solid var(--rule);padding-bottom:16px;}
 .hero .top-meta .right{display:inline-flex;gap:18px;align-items:center;color:var(--ink-soft);}
+@media(max-width:640px){.hero .top-meta{grid-template-columns:1fr;}.hero .top-meta>.meta{display:none;}}
 .hero h1{font-family:var(--f-display);font-size:var(--t-h1);line-height:0.92;letter-spacing:-0.022em;margin:0;font-weight:400;text-wrap:balance;max-width:18ch;}
 .hero h1 .em{font-style:italic;}
 .hero h1 .pale{color:var(--ink-faint);}
