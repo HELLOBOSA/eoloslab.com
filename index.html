@@ -91,7 +91,9 @@ h1,h2,h3,h4{margin:0;font-weight:400;}
 .hero h1{font-family:var(--f-display);font-size:var(--t-h1);line-height:0.92;letter-spacing:-0.022em;margin:0;font-weight:400;text-wrap:balance;max-width:18ch;}
 .hero h1 .em{font-style:italic;}
 .hero h1 .pale{color:var(--ink-faint);}
-.hero h1 .mark{position:relative;white-space:nowrap;background:linear-gradient(var(--accent),var(--accent)) bottom left/100% 6px no-repeat;padding-bottom:8px;}
+.hero h1 .mark{position:relative;background:linear-gradient(var(--accent),var(--accent)) bottom left/100% 6px no-repeat;padding-bottom:8px;}
+@media(min-width:641px){.hero h1 .mark{white-space:nowrap;}}
+.hero>*{min-width:0;}
 .hero-grid{display:grid;grid-template-columns:1.6fr 1fr;gap:clamp(24px,4vw,56px);align-items:end;}
 @media(max-width:980px){.hero-grid{grid-template-columns:1fr;}}
 .hero .lede{font-family:var(--f-display);font-size:var(--t-lede);line-height:1.3;color:var(--ink-soft);max-width:42ch;font-style:italic;}
