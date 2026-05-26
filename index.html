@@ -251,6 +251,7 @@ h1,h2,h3,h4{margin:0;font-weight:400;}
 @media(max-width:700px){.form{grid-template-columns:1fr;}.form .field,.form .field:nth-child(2n){padding:18px 0;border-left:0;}}
 .form .field label{font-family:var(--f-mono);font-size:var(--t-meta);letter-spacing:0.10em;text-transform:uppercase;color:var(--ink-mute);display:flex;justify-content:space-between;align-items:baseline;}
 .form .field label .ix{color:var(--ink-faint);}
+.form .field label .optional{font-size:var(--t-meta);font-style:italic;color:var(--ink-faint);font-family:var(--f-body);letter-spacing:0;text-transform:none;}
 .form .field input,.form .field textarea,.form .field select{width:100%;font-family:var(--f-display);font-size:clamp(20px,1.8vw,28px);line-height:1.2;letter-spacing:-0.005em;color:var(--ink);border-bottom:1px solid transparent;padding:6px 0 8px;transition:border-color 200ms;resize:vertical;}
 .form .field input::placeholder,.form .field textarea::placeholder{color:var(--ink-faint);font-style:italic;}
 .form .field:focus-within label{color:var(--ink);}
@@ -744,8 +745,8 @@ const TWEAK_DEFAULTS={"ground":"warm-dark","display":"instrument","layout":"marq
       <input type="email" name="email" placeholder="maria@example.com" required>
     </div>
     <div class="field">
-      <label><span>Company</span><span class="ix">03</span></label>
-      <input type="text" name="company" placeholder="Casa Sánchez">
+      <label><span>Phone</span> <span class="optional">(optional)</span><span class="ix">03</span></label>
+      <input type="tel" name="phone" placeholder="+1 555 123 4567">
     </div>
     <div class="field">
       <label><span>City</span><span class="ix">04</span></label>
